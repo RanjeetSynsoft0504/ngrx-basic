@@ -17,7 +17,7 @@ import { login } from '../../../store/actions/auth.action';
         <label>Password</label>
         <input type="password" class="form-control" [(ngModel)]="password" name="password" required />
       </div>
-      <button type="submit" class="btn btn-primary">Login</button>
+      <button type="submit" class="btn btn-primary mt-2">Login</button>
     </form>
   `
 })

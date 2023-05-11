@@ -1,3 +1,4 @@
+import { nonAuthGuard } from './../../services/auth-guards/non-auth.guard';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from '../../services/auth.service';
@@ -11,7 +12,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent }
+  { path: 'login', component: LoginComponent, canActivate: [nonAuthGuard] }
 ];
 
 @NgModule({

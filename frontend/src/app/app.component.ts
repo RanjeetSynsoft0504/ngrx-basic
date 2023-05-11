@@ -10,13 +10,23 @@ import { logout } from './store/actions/auth.action';
       <a class="navbar-brand" href="#">My App</a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
-          <li class="nav-item">
+          <li class="nav-item" *ngIf="isLoggedIn">
             <a class="nav-link" [routerLink]="['/home']">Home</a>
           </li>
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item" *ngIf="isLoggedIn">
+            <a class="nav-link" [routerLink]="['/users']">Users</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item" *ngIf="isLoggedIn">
             <a class="nav-link" (click)="onLogout()">Logout</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item" *ngIf="!isLoggedIn">
+            <a class="nav-link" [routerLink]="['/auth/login']">Login</a>
           </li>
         </ul>
       </div>
@@ -31,6 +41,7 @@ export class AppComponent {
 
   constructor(private store: Store<AppState>) {
     store.select(state => state.auth).subscribe(auth => {
+      console.log(auth);
       this.isLoggedIn = auth.isLoggedIn;
     });
   }

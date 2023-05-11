@@ -50,3 +50,32 @@ exports.signIn = async (req, res) => {
     res.status(500).json({message: 'Something went wrong!'});
   }
 };
+
+exports.logout = async (req, res) => {
+  try {
+    // res.clearCookie('token');
+    res.status(200).json({ message: 'Logged out successfully.' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Something went wrong!' });
+  }
+};
+
+exports.list = async (req, res) => {
+  // Validate request
+  try {
+    const result = [{
+      "id":"6451f627632a2c64e0ef224f",
+      "name": "Raj Doe",
+      "email": "rajdoe@mailinator.com",
+    },{
+      "id":"6451f789e3720888f7e32759",
+      "name": "Raj Doe1",
+      "email": "rajdoe1@mailinator.com",
+    }];
+    res.status(201).json({users: result});
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({message: 'Something went wrong!'});
+  }
+};

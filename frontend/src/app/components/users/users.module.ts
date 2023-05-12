@@ -1,7 +1,7 @@
+import { userReducer } from './../../store/reducers/user.reducer';
 import { authGuard } from './../../services/auth-guards/auth.guard';
 import { RouterModule, Routes } from '@angular/router';
 import { UserService } from './../../services/user.service';
-import { authReducer } from './../../store/reducers/auth.reducer';
 import { AuthEffects } from './../../store/effects/auth.effect';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -21,7 +21,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    StoreModule.forFeature('auth', authReducer),
+    StoreModule.forFeature('users', userReducer),
     EffectsModule.forFeature([AuthEffects])
   ],
   providers: [UserService]

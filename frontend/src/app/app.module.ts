@@ -14,7 +14,7 @@ import { AppComponent } from './app.component';
 // import { YoutubeLayoutComponent } from './components/layout/youtube-layout/youtube-layout.component';
 import { StoreModule } from '@ngrx/store';
 import { UsersModule } from './components/users/users.module';
-
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/home' },
   { path: 'auth', loadChildren: () => import('./components/auth/auth.module').then(m => m.AuthModule) },
@@ -36,8 +36,12 @@ const routes: Routes = [
     BrowserModule,
     AuthModule,
     UsersModule,
+    StoreModule.forRoot(authReducer),
+    StoreDevtoolsModule.instrument({
+      logOnly: true,
+      maxAge: 25, // Retains last 25 states
+    }),
     RouterModule.forRoot(routes),
-    StoreModule.forRoot({}),
     EffectsModule.forRoot([AuthEffects, UserEffects])
   ],
   providers: [

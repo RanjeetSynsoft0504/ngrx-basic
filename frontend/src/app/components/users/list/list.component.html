@@ -1,17 +1,5 @@
-<div *ngIf="loading$ | async">
-  Loading users...
-</div>
-
-<div *ngIf="error$ | async">
-  Error loading users: {{ error$ | async }}
-</div>
-
-<ul *ngIf="(users$ | async)">
-  <li *ngFor="let user of users$ | async">
-    {{ user.name }}
-  </li>
+<div *ngIf="loading$ | async">Loading users...</div>
+<div *ngIf="error$ | async">{{ error$ | async }}</div>
+<ul *ngIf="users$ | async as users">
+  <li *ngFor="let user of users">{{ user.name }}</li>
 </ul>
-
-<div *ngIf="(users$ | async)?.length === 0 && !(loading$ | async) && !(error$ | async)">
-  No users found.
-</div>

@@ -1,5 +1,6 @@
+import { selectUsers, selectUsersLoading, selectUsersError } from './../../../store/selectors/user.selectors';
+import { AppState } from './../../../models/app.state';
 import { User } from './../../../models/user';
-import { selectUsers, selectUsersError, selectUsersLoading } from './../../../store/selectors/user.selectors';
 import { loadUsers } from './../../../store/actions/user.action';
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
@@ -12,20 +13,23 @@ import { Observable, of } from 'rxjs';
 })
 export class ListComponent implements OnInit {
 
-  users$!: Observable<User[]>;
-  loading$!: Observable<boolean>;
-  error$!: Observable<any>;
+  // users$: Observable<User[]>;
+  // loading$: Observable<boolean>;
+  // error$: Observable<string>;
+  users$?: Observable<User[]>;
+  loading$?: Observable<boolean>;
+  error$?: Observable<string>;
 
   constructor(private store: Store) {}
 
   ngOnInit() {
     this.store.dispatch(loadUsers());
-    // this.store.pipe(select(selectUsers)).subscribe((users: any) => {
-    //   this.users$ = users;
-    // });
-    this.users$ = this.store.select(selectUsers);
+    console.log(this.store.select(selectUsers))
+     this.users$ = this.store.select(selectUsers);
     this.loading$ = this.store.select(selectUsersLoading);
     this.error$ = this.store.select(selectUsersError);
+    // this.users$ = this.store.select((state: AppState) => selectUsers(state.users));
+    // this.loading$ = this.store.select((state: AppState) => selectUsersLoading(state.users));
+    // this.error$ = this.store.select((state: AppState) => selectUsersError(state.users));
   }
-
 }

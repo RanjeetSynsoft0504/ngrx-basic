@@ -1,0 +1,42 @@
+<div class="container">
+  <h1>Create User</h1>
+  <form [formGroup]="userCreateForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        class="form-control"
+      />
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        class="form-control"
+      />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="form-control"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Create User</button>
+  </form>
+  <!-- <div *ngIf="(userCreateStatus$ | async) === 'loading'" class="text-info">
+    Creating user...
+  </div>
+  <div *ngIf="(userCreateStatus$ | async) === 'success'" class="text-success">
+    User created successfully!
+  </div>
+  <div *ngIf="(userCreateStatus$ | async) === 'error'" class="text-danger">
+    An error occurred while creating the user.
+  </div>
+</div> -->

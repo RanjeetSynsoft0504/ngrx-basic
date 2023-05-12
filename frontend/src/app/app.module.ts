@@ -10,7 +10,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 // import { DashboardComponent } from './components/layout/dashboard/dashboard.component';
-// import { HeaderComponent } from './components/layout/header/header.component';
+import { HeaderComponent } from './components/layout/header/header.component';
 // import { YoutubeLayoutComponent } from './components/layout/youtube-layout/youtube-layout.component';
 import { StoreModule } from '@ngrx/store';
 import { UsersModule } from './components/users/users.module';
@@ -28,7 +28,7 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     // DashboardComponent,
-    // HeaderComponent,
+    HeaderComponent,
     // YoutubeLayoutComponent
   ],
   imports: [

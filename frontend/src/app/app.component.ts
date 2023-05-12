@@ -6,34 +6,39 @@ import { logout } from './store/actions/auth.action';
 @Component({
   selector: 'app-root',
   template: `
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">My App</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-          <li class="nav-item" *ngIf="isLoggedIn">
-            <a class="nav-link" [routerLink]="['/home']">Home</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item" *ngIf="isLoggedIn">
-            <a class="nav-link" [routerLink]="['/users']">Users</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item" *ngIf="isLoggedIn">
-            <a class="nav-link" (click)="onLogout()">Logout</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item" *ngIf="!isLoggedIn">
-            <a class="nav-link" [routerLink]="['/auth/login']">Login</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
+  <section class="bg-light border-bottom">
     <div class="container">
-      <router-outlet></router-outlet>
+      <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand" href="#">
+              <img height="60px" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQphz2qdDvnZEWFhCTzXHIyVFyWWXm8YEDd_DNRnTG&s" alt="">
+            </a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item" *ngIf="isLoggedIn">
+                <a class="nav-link" [routerLink]="['/home']">Home</a>
+              </li>
+              <li class="nav-item" *ngIf="isLoggedIn">
+              <a class="nav-link" [routerLink]="['/users']">Users</a>
+            </li>
+            </ul>
+            <div class="right_nav">
+              <div class="nav-item" *ngIf="!isLoggedIn">
+                <a class="nav-link" [routerLink]="['/auth/login']">Login</a>
+              </div>
+              <div class="nav-item" *ngIf="isLoggedIn">
+                <a class="nav-link" (click)="onLogout()">Logout</a>
+              </div>
+          </div>
+          </div>
+        </div>
+      </nav>
     </div>
+  </section>
+  <router-outlet></router-outlet>
   `
 })
 export class AppComponent {

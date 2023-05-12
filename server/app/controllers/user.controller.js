@@ -63,17 +63,43 @@ exports.logout = async (req, res) => {
 
 exports.list = async (req, res) => {
   // Validate request
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
   try {
-    const result = [{
-      "id":"6451f627632a2c64e0ef224f",
-      "name": "Raj Doe",
-      "email": "rajdoe@mailinator.com",
-    },{
-      "id":"6451f789e3720888f7e32759",
-      "name": "Raj Doe1",
-      "email": "rajdoe1@mailinator.com",
-    }];
-    res.status(201).json({users: result});
+    console.log(req.query, '------------------------');
+    const users = await User.find().skip(startIndex).limit(limit);
+    const count = await User.countDocuments();
+    const totalPages = Math.ceil(count / limit);
+    const currentPage = page > totalPages ? totalPages : page;
+    const pagination = { currentPage, totalPages };
+    res.json({ users, pagination });
+    res.status(200).json({users: result, pagination});
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.add = async (req, res) => {
+  // Validate request
+  const {email, password, name} = req.body;
+  try {
+    if (!req.body) {
+      return res.status(400).json({message: 'Credentials required'})
+    }
+    const existingUser = await User.findOne({email: email});
+    if (existingUser) {
+      return res.status(400).json({message: 'User already exist.'})
+    }
+    const hashPassowrd = await bcrypt.hash(password, 10);
+    const result = User.create({
+      name: name,
+      email: email,
+      password: hashPassowrd,
+    });
+    const token = jwt.sign({email: email, id:result._id }, SECRET_KEY);
+    res.status(201).json({user: result, token: token});
   } catch (error) {
     console.log(error)
     res.status(500).json({message: 'Something went wrong!'});

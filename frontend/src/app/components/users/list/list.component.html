@@ -1,5 +1,24 @@
-<div *ngIf="loading$ | async">Loading users...</div>
-<div *ngIf="error$ | async">{{ error$ | async }}</div>
-<ul *ngIf="users$ | async as users">
-  <li *ngFor="let user of users">{{ user.name }}</li>
-</ul>
+<div class="container my-4">
+  <div *ngIf="loading$ | async">Loading users...</div>
+  <div *ngIf="error$ | async">{{ error$ | async }}</div>
+  <div class="text-right ml-auto"><a type="button" class="btn btn-primary" [routerLink]="['/users/add']">Add</a></div>
+  <div class="table-responsive" *ngIf="users$ | async as users">
+    <table class="table caption-top">
+      <caption>List of users</caption>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td><a type="button" [routerLink]="['/users/add']"><i class="bi bi-pencil-square"></i></a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

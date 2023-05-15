@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { AlertService } from './services/alert.service';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from './models/app.state';
 import { logout } from './store/actions/auth.action';
@@ -38,18 +39,23 @@ import { logout } from './store/actions/auth.action';
       </nav>
     </div>
   </section>
+  <app-alert *ngIf="(alertService.alert$ | async) as alert"></app-alert>
   <router-outlet></router-outlet>
   `
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   isLoggedIn: boolean = false;
 
-  constructor(private store: Store<AppState>) {
+  constructor(private store: Store<AppState>, public alertService: AlertService) {
     store.select(state => state.auth).subscribe(auth => {
       console.log(auth);
       this.isLoggedIn = auth.isLoggedIn;
     });
   }
+
+ngOnInit(): void {
+  this.alertService.init();
+}
 
   onLogout() {
     this.store.dispatch(logout());

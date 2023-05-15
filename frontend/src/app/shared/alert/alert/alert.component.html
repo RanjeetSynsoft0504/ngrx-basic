@@ -1,0 +1,5 @@
+<div class="alert" [ngClass]="classes" *ngIf="show">
+  <span *ngIf="type === 'success'" class="glyphicon glyphicon-ok"></span>
+  <span *ngIf="type === 'error'" class="glyphicon glyphicon-remove"></span>
+  {{ message }}
+</div>

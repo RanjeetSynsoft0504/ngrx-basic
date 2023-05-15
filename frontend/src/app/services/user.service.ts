@@ -36,7 +36,7 @@ export class UserService {
     } else {
       // The backend returned an error response. Handle it accordingly.
       console.error('Error response:', error.error);
-      return throwError(() => error.error.message || 'Something bad happened; please try again later.');
+      return throwError(() => error.error.message || 'An error occurred; please try again later.');
     }
   }
 }

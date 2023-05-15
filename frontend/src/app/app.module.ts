@@ -1,3 +1,5 @@
+import { AlertService } from './services/alert.service';
+import { HomeComponent } from './components/home/home/home.component';
 import { AuthInterceptor } from './auth.interceptor';
 import { RouterModule, Routes } from '@angular/router';
 import { authReducer } from './store/reducers/auth.reducer';
@@ -15,11 +17,14 @@ import { HeaderComponent } from './components/layout/header/header.component';
 import { StoreModule } from '@ngrx/store';
 import { UsersModule } from './components/users/users.module';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AlertComponent } from './shared/alert/alert/alert.component';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/home' },
   { path: 'auth', loadChildren: () => import('./components/auth/auth.module').then(m => m.AuthModule) },
   { path: 'home', loadChildren: () => import('./components/home/home.module').then(m => m.HomeModule) },
-  { path: 'users', loadChildren: () => import('./components/users/users.module').then(m => m.UsersModule) }
+  { path: 'users', loadChildren: () => import('./components/users/users.module').then(m => m.UsersModule) },
+  { path: '**', component: HomeComponent }
+
 
 ];
 
@@ -29,6 +34,7 @@ const routes: Routes = [
     AppComponent,
     // DashboardComponent,
     HeaderComponent,
+    AlertComponent,
     // YoutubeLayoutComponent
   ],
   imports: [
@@ -45,6 +51,7 @@ const routes: Routes = [
     EffectsModule.forRoot([AuthEffects, UserEffects])
   ],
   providers: [
+    AlertService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

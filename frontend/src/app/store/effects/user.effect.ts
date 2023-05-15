@@ -1,3 +1,5 @@
+import { AlertService } from './../../services/alert.service';
+import { Router } from '@angular/router';
 import { UserService } from './../../services/user.service';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -37,7 +39,7 @@ export class UserEffects {
       switchMap(({ user }) =>
         this.userService.createUser(user).pipe(
           map(() => UserActions.createUserSuccess()),
-          catchError((error) => of(UserActions.createUserError({ error })))
+          catchError((error: any) => of(UserActions.createUserError({ error })))
         )
       )
     )
@@ -48,7 +50,8 @@ export class UserEffects {
       this.actions$.pipe(
         ofType(UserActions.createUserSuccess),
         tap((response) => {
-          console.log(response)
+          UserActions.loadUsers()
+          this.router.navigate(['/users']);
         })
       ),
     { dispatch: false }
@@ -58,12 +61,13 @@ export class UserEffects {
     () =>
       this.actions$.pipe(
         ofType(UserActions.createUserError),
-        tap((response) => {
-          console.log(response)
+        tap((action) => {
+          console.error(action.error);
+          this.alertService.error(action.error);
         })
       ),
     { dispatch: false }
   );
 
-  constructor(private actions$: Actions, private userService: UserService) {}
+  constructor(private actions$: Actions, private userService: UserService,private router: Router, private alertService: AlertService) {}
 }

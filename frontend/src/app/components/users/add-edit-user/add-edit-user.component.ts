@@ -1,8 +1,10 @@
+import { AlertService } from './../../../services/alert.service';
+import { Router } from '@angular/router';
 import { getUserCreateError } from './../../../store/selectors/user.selectors';
-import { catchError } from 'rxjs/operators';
-import { createUser } from './../../../store/actions/user.action';
+import { catchError, skipWhile, take } from 'rxjs/operators';
+import { createUser, loadUsers } from './../../../store/actions/user.action';
 import { User } from './../../../models/user';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, UntypedFormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
@@ -14,9 +16,11 @@ import { of } from 'rxjs';
 })
 export class AddEditUserComponent implements OnInit {
   userCreateForm!: FormGroup;
-
+  dddd: any
   constructor(
+    private alertService: AlertService,
     private fb: FormBuilder,
+    private router: Router,
     private store: Store<{ userCreate: User }>
   ) {}
 
@@ -38,15 +42,17 @@ export class AddEditUserComponent implements OnInit {
     };
 
     this.store.dispatch(createUser({ user }));
-    this.store.select(getUserCreateError).pipe(
-      catchError((error) => {
-        console.log('Error creating user:', error);
-        return of(null);
-      })
-    ).subscribe((error) => {
-      console.log(typeof error);
-      if (!error) {
-        this.userCreateForm.reset();
+    // this.store.select(getUserCreateError).pipe(take(1)).subscribe((error) => {
+    //   if (error) {
+    //     alert(error);
+    //   }
+    // });
+
+    this.store.select(getUserCreateError)
+    .pipe(skipWhile((error) => error === null))
+    .subscribe((error) => {
+      if (error) {
+        this.alertService.success(error);
       }
     });
   }

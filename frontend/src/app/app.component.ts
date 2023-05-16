@@ -1,3 +1,4 @@
+import { NavigationEnd, Router } from '@angular/router';
 import { AlertService } from './services/alert.service';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -46,7 +47,7 @@ import { logout } from './store/actions/auth.action';
 export class AppComponent implements OnInit {
   isLoggedIn: boolean = false;
 
-  constructor(private store: Store<AppState>, public alertService: AlertService) {
+  constructor(private store: Store<AppState>, public alertService: AlertService, public router: Router) {
     store.select(state => state.auth).subscribe(auth => {
       console.log(auth);
       this.isLoggedIn = auth.isLoggedIn;
@@ -54,7 +55,12 @@ export class AppComponent implements OnInit {
   }
 
 ngOnInit(): void {
-  this.alertService.init();
+  // this.alertService.init();
+  this.router.events.subscribe((event) => {
+    if (event instanceof NavigationEnd) {
+      this.alertService.setCurrentPage(event.urlAfterRedirects);
+    }
+  });
 }
 
   onLogout() {

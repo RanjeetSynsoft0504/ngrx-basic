@@ -12,6 +12,22 @@ export class AlertService {
   alert$ = this.alertSubject.asObservable();
   private showAlertSubject = new Subject<boolean>();
   showAlert$ = this.showAlertSubject.asObservable();
+
+
+  private readonly PAGE_KEY = 'currentPage';
+
+  getCurrentPage(): string | null {
+    return localStorage.getItem(this.PAGE_KEY);
+  }
+
+  setCurrentPage(page: string): void {
+    localStorage.setItem(this.PAGE_KEY, page);
+  }
+
+  clearCurrentPage(): void {
+    localStorage.removeItem(this.PAGE_KEY);
+  }
+
   init() {
     this.alert$ = this.alertSubject.asObservable();
     this.showAlert$ = this.showAlertSubject.asObservable();

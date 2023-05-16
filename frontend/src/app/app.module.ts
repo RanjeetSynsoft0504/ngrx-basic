@@ -47,7 +47,9 @@ const routes: Routes = [
       logOnly: true,
       maxAge: 25, // Retains last 25 states
     }),
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes, {
+      onSameUrlNavigation: 'reload' // Add this option to reload the same URL
+}),
     EffectsModule.forRoot([AuthEffects, UserEffects])
   ],
   providers: [

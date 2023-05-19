@@ -7,8 +7,11 @@
 /bazel-out
 
 # Node
+/old/node_modules
 /frontend/node_modules
+/old/.angular
 /frontend/.angular
+/old/.vscode
 /frontend/.vscode
 /server/node_modules
 /node_modules

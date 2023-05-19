@@ -1,41 +1,99 @@
-import { loginSuccess } from './../store/actions/auth.action';
-import { Store } from '@ngrx/store';
-import { AppState } from './../models/app.state';
-import { Router } from '@angular/router';
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { User } from './../models/user.model';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { AuthResponseData } from './../models/AuthResponseData.model';
+import { environment } from './../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { AppState } from '../store/app.state';
+import { Store } from '@ngrx/store';
+import { autoLogout } from '../auth/state/auth.actions';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api';
+  timeoutInterval: any;
+  constructor(private http: HttpClient, private store: Store<AppState>) {}
 
-  constructor(private http: HttpClient, private router: Router) {}
-
-  login(user: { email: string; password: string }): Observable<{ token: string }> {
-    const url = `${this.apiUrl}/auth/signin`;
-    return this.http.post<{ token: string }>(url, user).pipe(
-      tap(response => {
-        console.log(response);
-        localStorage.setItem('token', response.token);
-      })
+  login(email: string, password: string): Observable<AuthResponseData> {
+    return this.http.post<AuthResponseData>(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.FIRBASE_API_KEY}`,
+      { email, password, returnSecureToken: true }
     );
   }
 
-  logout(): Observable<{ token: string }> {
-    const url = `${this.apiUrl}/auth/logout`;
-    return this.http.post<{ token: string }>(url, {}).pipe(
-      tap(response => {
-        console.log(response);
-        localStorage.removeItem('token');
-      })
+  signUp(email: string, password: string): Observable<AuthResponseData> {
+    return this.http.post<AuthResponseData>(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.FIRBASE_API_KEY}`,
+      { email, password, returnSecureToken: true }
     );
   }
 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+  formatUser(data: AuthResponseData) {
+    const expirationDate = new Date(
+      new Date().getTime() + +data.expiresIn * 1000
+    );
+    const user = new User(
+      data.email,
+      data.idToken,
+      data.localId,
+      expirationDate
+    );
+    return user;
+  }
+
+  getErrorMessage(message: string) {
+    switch (message) {
+      case 'EMAIL_NOT_FOUND':
+        return 'Email Not Found';
+      case 'INVALID_PASSWORD':
+        return 'Invalid Password';
+      case 'EMAIL_EXISTS':
+        return 'Email already exists';
+      default:
+        return 'Unknown error occurred. Please try again';
+    }
+  }
+
+  setUserInLocalStorage(user: User) {
+    localStorage.setItem('userData', JSON.stringify(user));
+
+    this.runTimeoutInterval(user);
+  }
+
+  runTimeoutInterval(user: User) {
+    const todaysDate = new Date().getTime();
+    const expirationDate = user.expireDate.getTime();
+    const timeInterval = expirationDate - todaysDate;
+
+    this.timeoutInterval = setTimeout(() => {
+      this.store.dispatch(autoLogout());
+      //logout functionality or get the refresh token
+    }, timeInterval);
+  }
+
+  getUserFromLocalStorage() {
+    const userDataString = localStorage.getItem('userData');
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      const expirationDate = new Date(userData.expirationDate);
+      const user = new User(
+        userData.email,
+        userData.token,
+        userData.localId,
+        expirationDate
+      );
+      this.runTimeoutInterval(user);
+      return user;
+    }
+    return null;
+  }
+
+  logout() {
+    localStorage.removeItem('userData');
+    if (this.timeoutInterval) {
+      clearTimeout(this.timeoutInterval);
+      this.timeoutInterval = null;
+    }
   }
 }

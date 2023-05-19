@@ -1,65 +1,48 @@
-import { AlertService } from './services/alert.service';
-import { HomeComponent } from './components/home/home/home.component';
-import { AuthInterceptor } from './auth.interceptor';
-import { RouterModule, Routes } from '@angular/router';
-import { authReducer } from './store/reducers/auth.reducer';
-import { AuthEffects } from './store/effects/auth.effect';
-import { UserEffects } from './store/effects/user.effect';
-import { EffectsModule } from '@ngrx/effects';
-import { AuthModule } from './components/auth/auth.module';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CustomSerializer } from './store/router/custom-serializer';
+import { AuthTokenInterceptor } from './services/AuthToken.interceptor';
+import { AuthEffects } from './auth/state/auth.effects';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AppComponent } from './app.component';
-// import { DashboardComponent } from './components/layout/dashboard/dashboard.component';
-import { HeaderComponent } from './components/layout/header/header.component';
-// import { YoutubeLayoutComponent } from './components/layout/youtube-layout/youtube-layout.component';
-import { StoreModule } from '@ngrx/store';
-import { UsersModule } from './components/users/users.module';
+import { EffectsModule } from '@ngrx/effects';
+import { appReducer } from './store/app.state';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { AlertComponent } from './shared/alert/alert/alert.component';
-const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: '/home' },
-  { path: 'auth', loadChildren: () => import('./components/auth/auth.module').then(m => m.AuthModule) },
-  { path: 'home', loadChildren: () => import('./components/home/home.module').then(m => m.HomeModule) },
-  { path: 'users', loadChildren: () => import('./components/users/users.module').then(m => m.UsersModule) },
-  { path: '**', component: HomeComponent }
+import { AppRoutingModule } from './app-routing.module';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 
-
-];
-
+import { AppComponent } from './app.component';
+import { StoreModule } from '@ngrx/store';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HomeComponent } from './home/home.component';
+import { HeaderComponent } from './shared/components/header/header.component';
+import { environment } from 'src/environments/environment';
+import { LoadingSpinnerComponent } from './shared/components/loading-spinner/loading-spinner.component';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 @NgModule({
   declarations: [
     AppComponent,
-    // DashboardComponent,
+    HomeComponent,
     HeaderComponent,
-    AlertComponent,
-    // YoutubeLayoutComponent
+    LoadingSpinnerComponent,
   ],
   imports: [
-    HttpClientModule,
     BrowserModule,
-    AuthModule,
-    UsersModule,
-    StoreModule.forRoot(authReducer),
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    FormsModule,
+    EffectsModule.forRoot([AuthEffects]),
+    StoreModule.forRoot(appReducer),
     StoreDevtoolsModule.instrument({
-      logOnly: true,
-      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production,
     }),
-    RouterModule.forRoot(routes, {
-      onSameUrlNavigation: 'reload' // Add this option to reload the same URL
-}),
-    EffectsModule.forRoot([AuthEffects, UserEffects])
+    StoreRouterConnectingModule.forRoot({
+      serializer: CustomSerializer,
+    }),
   ],
   providers: [
-    AlertService,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-  constructor(private authEffects: AuthEffects) {
-    this.authEffects.checkAuthenticationStatus();
-  }
-}
+export class AppModule {}
